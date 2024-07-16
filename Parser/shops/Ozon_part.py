@@ -1,12 +1,11 @@
-from goods import Moscl
 from time import sleep
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
+from base.translit import transliterate
 from selenium.common import exceptions 
-from translit import transliterate
 
 class Ozon():
     searchstr = '/html/body/div[1]/div/div[1]/header/div[1]/div/div[2]/div/div/form/div/div[2]/input' # Посковая строка на сайте
@@ -44,50 +43,48 @@ class Ozon():
             sleep(1)
             wait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH, self.first_submit_button))).click()
             sleep(2)
-            #wait(self.browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/div/div/div/div/div/div/div[1]/div/div/div/div[2]/button'))).click()
-            save_but = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, self.second_submit_button)))
+            save_but = wait(self.browser, 10).until(EC.element_to_be_clickable((By.XPATH, self.second_submit_button))).click()
             sleep(0.1)
             save_but.click()
-        except:
-            pass
-    def bestl(self, t, nm, k):
-        # to-do Написать функцию, которая заменит чать с try except и будет лучше определять наиболее подходящий товар
-        """Проходит по всем товарам и определяет самый лучший"""
-        nmt = transliterate(nm)
-        c = 0
-        best = ''
-        for lt in t:
-            link = lt.find_element(By.TAG_NAME, 'a').get_attribute('href')
-            price = lt.find_element(By.XPATH, price).text
-            full_price = lt.find_element(By.XPATH, full_price).text
-            name = lt.find_element(By.XPATH, name).text
-            if c == 0:
-                price_of_best = price 
-                full_price_of_best = full_price
-                name_of_best = name 
-                c += 1
-            try:
-                nameinlink = link.split(r'/')[-1]
-                if nmt.split().issubset(nameinlink.lower()) or nameinlink.split().lower().issubset(nmt):
-                    price_of_best = price 
-                    full_price_of_best = full_price
-                    name_of_best = name 
-                    break
-            except:
-                break
-        self.df.iloc[k, 0] = name
-        self.df.iloc[k, 3] = price_of_best
-        self.df.iloc[k, 4] = full_price_of_best
-    
-    def sup(self):
-        """Находит карточки всех доступных товаров, по данному запросу"""
-        for k in range(len(Moscl)):
-            i = Moscl[k]
-            searchbar = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, self.searchstr)))
-            searchbar.click()
-            searchbar.send_keys(Keys.CONTROL + 'a' + Keys.DELETE)
-            searchbar.send_keys(i)
-            searchbar.send_keys(Keys.ENTER)
-            wait(self.browser, 15).until(EC.text_to_be_present_in_element_value((By.XPATH, self.searchstr), i))
-            t = self.browser.find_elements(By.CLASS_NAME, self.class_of_supply_el)
-            self.bestl(t, i, k)
+        except exceptions.TimeoutException:
+            print('Проблема установки адреса, впишите его в ручную, проверьте, что адрес введен на Ozon fresh и введите в консоль какой либо символ')
+            input()
+        except Exception as ex:
+            print(f'Ошибка по неизвестной причине, код ошибки {str(ex)}')
+    # def sup(self, t, nm, k):
+    #     """Находит карточки всех доступных товаров, по данному запросу"""
+    #     Moscl = goods
+    #     for k in range(len(Moscl)):
+    #         i = Moscl[k]
+    #         print(i)
+    #         searchbar = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, self.searchstr)))
+    #         searchbar.click()
+    #         searchbar.send_keys(Keys.CONTROL + 'a' + Keys.DELETE)
+    #         searchbar.send_keys(i)
+    #         searchbar.send_keys(Keys.ENTER)
+    #         wait(self.browser, 15).until(EC.text_to_be_present_in_element_value((By.XPATH, self.searchstr), i))
+    #         t = self.browser.find_elements(By.CLASS_NAME, self.class_of_supply_el)
+    #         c = 0
+    #         best = ''
+    #         for lt in t:
+    #             link = lt.find_element(By.TAG_NAME, 'a').get_attribute('href')
+    #             price = lt.find_element(By.XPATH, price).text
+    #             full_price = lt.find_element(By.XPATH, full_price).text
+    #             name = lt.find_element(By.XPATH, name).text
+    #             if c == 0:
+    #                 price_of_best = price 
+    #                 full_price_of_best = full_price
+    #                 name_of_best = name 
+    #                 c += 1
+    #             try:
+    #                 nameinlink = link.split(r'/')[-1]
+    #                 if nmt.split().issubset(nameinlink.lower()) or nameinlink.split().lower().issubset(nmt):
+    #                     price_of_best = price 
+    #                     full_price_of_best = full_price
+    #                     name_of_best = name 
+    #                     break
+    #             except:
+    #                 break
+    #         self.df.iloc[k, 0] = name
+    #         self.df.iloc[k, 3] = price_of_best
+    #         self.df.iloc[k, 4] = full_price_of_best
