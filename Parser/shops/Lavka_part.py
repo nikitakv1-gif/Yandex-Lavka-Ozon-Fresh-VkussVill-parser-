@@ -40,17 +40,21 @@ class Lavka():
         # but = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, self.OK_button)))
         # sleep(2)
         # but.click()
-        address = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH,self.address_button))).click() # Нажимаем на кнопку, чтобы открылось окно смены адреса 
-        adrsstr = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH,self.adrstr))) # Сохраняем объект строки для ввода адресак
-        adrsstr.send_keys(Keys.CONTROL + 'a' + Keys.DELETE) # Удаляем то, что Яндекс автоматически вставляет
-        adrsstr.send_keys('Москва, Запорожская улица, 5') #Вписываем нужное
-        sleep(2)
-        adrsstr.send_keys(Keys.SPACE) #Ставим пробел, чтобы появился правильный выпадающий список
-        sleep(1)
-        wait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH,self.first_address))).click() # Кликаем на первый элемент выпадающего списка адресов
-        but = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, self.OK_button))) #Сохраняем элемент кнопки потверждающей введенный адрес
-        sleep(2)
-        but.click() # Завершаем установку адреса, кликая на кнопку ОК
+        try:
+            address = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH,self.address_button))).click() # Нажимаем на кнопку, чтобы открылось окно смены адреса 
+            adrsstr = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH,self.adrstr))) # Сохраняем объект строки для ввода адресак
+            adrsstr.send_keys(Keys.CONTROL + 'a' + Keys.DELETE) # Удаляем то, что Яндекс автоматически вставляет
+            adrsstr.send_keys('Москва, Запорожская улица, 5') #Вписываем нужное
+            sleep(2)
+            adrsstr.send_keys(Keys.SPACE) #Ставим пробел, чтобы появился правильный выпадающий список
+            sleep(1)
+            wait(self.browser, 15).until(EC.presence_of_element_located((By.XPATH,self.first_address))).click() # Кликаем на первый элемент выпадающего списка адресов
+            but = wait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, self.OK_button))) #Сохраняем элемент кнопки потверждающей введенный адрес
+            sleep(2)
+            but.click() # Завершаем установку адреса, кликая на кнопку ОК
+        except:
+            print('Проблема установки адреса, впишите его в ручную, проверьте, что адрес введен на Ozon fresh и введите в консоль какой либо символ')
+            input()
     def sup(self):
         """Находит карточки всех доступных товаров, по данному запросу"""
         for k in range(len(self.names)): # Запускаем цикл, для того, чтобы сделать запросы по всем элементам списка
